@@ -104,11 +104,11 @@ class Xophz_Compass_Alphabet_Soup_API {
 			'get_callback' => function( $post_arr ) {
 				$id = isset( $post_arr['id'] ) ? (int) $post_arr['id'] : 0;
 				if ( ! $id ) return 0;
-				$views = get_post_meta( $id, '_compass_page_views', true );
+				$views = get_post_meta( $id, 'post_views_count', true );
 				if ( '' === $views || false === $views ) {
-					$views = get_post_meta( $id, 'post_views_count', true );
+					$views = get_post_meta( $id, '_compass_page_views', true );
 					if ( '' === $views || false === $views ) {
-						$views = ($id * 19 + 7) % 480 + 15;
+						$views = 0;
 					}
 				}
 				return (int) $views;
@@ -202,6 +202,36 @@ class Xophz_Compass_Alphabet_Soup_API {
 		) );
 	}
 
+	private function get_openai_key() {
+		if ( function_exists( 'wp_get_connectors' ) ) {
+			$connectors = wp_get_connectors();
+			if ( ! empty( $connectors['openai']['authentication']['setting_name'] ) ) {
+				$api_key = get_option( $connectors['openai']['authentication']['setting_name'], '' );
+				if ( ! empty( $api_key ) ) {
+					return $api_key;
+				}
+			}
+		}
+		$key = get_option( 'xophz_compass_ai_api_key', '' );
+		if ( empty($key) ) {
+			$key = getenv( 'OPENAI_API_KEY' );
+		}
+		return $key;
+	}
+
+	private function get_openai_model() {
+		if ( function_exists( 'wp_get_connectors' ) ) {
+			$connectors = wp_get_connectors();
+			if ( ! empty( $connectors['openai']['options']['model']['setting_name'] ) ) {
+				$model = get_option( $connectors['openai']['options']['model']['setting_name'], '' );
+				if ( ! empty( $model ) ) {
+					return $model;
+				}
+			}
+		}
+		return 'gpt-4o';
+	}
+
 	/**
 	 * POST: Generate AI Assistant Content
 	 */
@@ -211,7 +241,8 @@ class Xophz_Compass_Alphabet_Soup_API {
 		$title   = isset( $params['title'] ) ? sanitize_text_field( $params['title'] ) : '';
 		$content = isset( $params['content'] ) ? wp_kses_post( $params['content'] ) : '';
 
-		$api_key = get_option( 'xophz_compass_ai_api_key', '' );
+		$api_key = $this->get_openai_key();
+		$model   = $this->get_openai_model();
 
 		if ( ! empty( $api_key ) ) {
 			$prompt = "You are an expert editor. Action: {$action}. Title: {$title}. Content: {$content}";
@@ -221,7 +252,7 @@ class Xophz_Compass_Alphabet_Soup_API {
 					'Content-Type'  => 'application/json',
 				),
 				'body' => wp_json_encode( array(
-					'model' => 'gpt-3.5-turbo',
+					'model' => $model,
 					'messages' => array( array( 'role' => 'user', 'content' => $prompt ) ),
 				) ),
 				'timeout' => 15,
