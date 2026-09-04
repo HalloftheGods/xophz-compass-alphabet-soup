@@ -8,7 +8,7 @@
  * registers the activation and deactivation functions, and defines a function
  * that starts the plugin.
  *
- * @link              http://example.com
+ * @link              https://youmeos.com
  * @since             1.0.0
  * @package           Xophz_Compass_Alphabet_Soup
  *
@@ -53,8 +53,7 @@ function activate_xophz_compass_alphabet_soup() {
  * This action is documented in includes/class-xophz-compass-alphabet-soup-deactivator.php
  */
 function deactivate_xophz_compass_alphabet_soup() {
-  require_once plugin_dir_path( __FILE__ ) . 'includes/class-xophz-compass-alphabet-soup-deactivator.php';
-  Xophz_Compass_Alphabet_Soup_Deactivator::deactivate();
+	Xophz_Compass_Alphabet_Soup::deactivate();
 }
 
 register_activation_hook( __FILE__, 'activate_xophz_compass_alphabet_soup' );
