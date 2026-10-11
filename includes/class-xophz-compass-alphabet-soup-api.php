@@ -10,6 +10,8 @@
  * @subpackage Xophz_Compass_Alphabet_Soup/includes
  */
 
+require_once plugin_dir_path( __FILE__ ) . 'class-xophz-compass-alphabet-soup-connectors.php';
+
 class Xophz_Compass_Alphabet_Soup_API {
 
 	public function register_routes() {
@@ -203,20 +205,7 @@ class Xophz_Compass_Alphabet_Soup_API {
 	}
 
 	private function get_openai_key() {
-		if ( function_exists( 'wp_get_connectors' ) ) {
-			$connectors = wp_get_connectors();
-			if ( ! empty( $connectors['openai']['authentication']['setting_name'] ) ) {
-				$api_key = get_option( $connectors['openai']['authentication']['setting_name'], '' );
-				if ( ! empty( $api_key ) ) {
-					return $api_key;
-				}
-			}
-		}
-		$key = get_option( 'xophz_compass_ai_api_key', '' );
-		if ( empty($key) ) {
-			$key = getenv( 'OPENAI_API_KEY' );
-		}
-		return $key;
+		return Xophz_Compass_Alphabet_Soup_Connectors::get_key( Xophz_Compass_Alphabet_Soup_Connectors::OPENAI );
 	}
 
 	private function get_openai_model() {
