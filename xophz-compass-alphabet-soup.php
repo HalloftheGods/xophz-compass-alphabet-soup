@@ -19,8 +19,8 @@
  * Plugin URI:        https://github.com/HalloftheGods/xophz-compass-alphabet-soup
  * Description:       Quickly add, edit, delete posts in this modern-day post manager.
  * Version:           26.10.11
- * Author:            Hall of the Gods, Inc.
- * Author URI:        http://www.midknightknerd.com/xp
+ * Author:            My Compass Consulting
+ * Author URI:        https://mycompassconsulting.com/
  * License:           GPL-2.0+
  * License URI:       http://www.gnu.org/licenses/gpl-2.0.txt
  * Text Domain:       xophz-compass-alphabet-soup
